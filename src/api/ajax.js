@@ -5,12 +5,12 @@
  * 功能说明：
  *
  */
-import {get, post} from '../config/http'
+import {get, post} from '../config/http';
 
 const $ajax = {
     getUserInfo() {
-        return get('/user_info', {})
+        return get('/user_info', {});
     }
-}
+};
 
-export default $ajax
+export default $ajax;

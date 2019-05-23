@@ -7,7 +7,7 @@ class Root extends React.Component {
     render() {
         return <div>
             <DatePicker/>
-        </div>
+        </div>;
     }
 }
 
