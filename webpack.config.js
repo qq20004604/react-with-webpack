@@ -1,35 +1,35 @@
 ﻿// 引入插件
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const webpack = require('webpack')
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-const path = require('path')
-const fs = require('fs')
+const webpack = require('webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin/dist');
+const path = require('path');
+const fs = require('fs');
 
 const getEntries = function () {
     // 获取page目录
-    let root = path.join(`${__dirname}/src/page`)
+    let root = path.join(`${__dirname}/src/page`);
     let list = [];
     // 读取该目录下所有文件和目录
-    let allfiles = fs.readdirSync(root)
+    let allfiles = fs.readdirSync(root);
     // 遍历
     allfiles.forEach(filename => {
-        let pname = path.join(`${root}/${filename}`)
-        let info = fs.statSync(pname)
+        let pname = path.join(`${root}/${filename}`);
+        let info = fs.statSync(pname);
         // 查看该文件是不是目录
         if (info.isDirectory()) {
             // 是，则将该文件目录加入到dirs里
             list.push({
                 filename,
                 path: path.join(`${pname}/app.jsx`)
-            })
+            });
         }
-    })
-    let entry = {}
+    });
+    let entry = {};
     // 配置入口
     list.forEach(item => {
         entry[item.filename] = item.path;
-    })
+    });
     // 配置 HtmlWebpackPlugin
     let plugins = list.map(item => {
         return new HtmlWebpackPlugin({
@@ -37,16 +37,16 @@ const getEntries = function () {
             template: `./index.html`,
             chunks: item.filename, // 实现多入口的核心，决定自己加载哪个js文件，这里的 page.url 指的是 entry 对象的 key 所对应的入口打包出来的js文件
             xhtml: true,    // 自闭标签
-        })
-    })
+        });
+    });
 
     let result = {
         entry,
         plugins
-    }
+    };
     return result;
-}
-const entries = getEntries()
+};
+const entries = getEntries();
 
 const config = {
     // 入口文件
@@ -123,7 +123,7 @@ const config = {
                             limit: 4096,
                             name: '[hash].[ext]',
                             outputPath: function (fileName) {
-                                return 'img/' + fileName    // 后面要拼上这个 fileName 才行
+                                return 'img/' + fileName;    // 后面要拼上这个 fileName 才行
                             }
                         }
                     }
@@ -151,12 +151,20 @@ const config = {
     ]),
     resolve: {
         // 省略后缀名
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
+        alias: {
+            '@': resolve('src'),
+            'component': resolve('src/components'),
+            'common': resolve('src/common'),
+            'api': resolve('src/api'),
+            'page': resolve('src/page'),
+            'assets': resolve('src/assets')
+        }
     }
-}
+};
 
 if (process.env.npm_lifecycle_event === 'build') {
-    console.log('building..............')
+    console.log('building..............');
     config.plugins = config.plugins.concat([
         new CleanWebpackPlugin(),
         new webpack.DefinePlugin({
@@ -165,18 +173,18 @@ if (process.env.npm_lifecycle_event === 'build') {
             }
         }),
         new UglifyJSPlugin()
-    ])
+    ]);
 } else {
     config.entry.vendor = [
         'react',
         'react-dom',
-    ]
+    ];
 }
-console.log('\033[;31m 你可以通过以下链接来打开页面！')
+console.log('\033[;31m 你可以通过以下链接来打开页面！');
 Object.keys(entries.entry).forEach(key => {
     if (key !== 'vendor') {
-        console.log(`http://localhost:8080/${key}.html`)
+        console.log(`http://localhost:8080/${key}.html`);
     }
-})
+});
 
-module.exports = config
+module.exports = config;
