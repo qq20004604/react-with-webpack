@@ -1,12 +1,15 @@
-import {DatePicker} from 'antd/lib/index';
+// import {DatePicker} from 'antd/lib/index';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
+import './style.less';
 
 class Root extends React.Component {
     render() {
         return <div>
-            <DatePicker/>
+            <div id="container">
+                abc
+            </div>
         </div>;
     }
 }
