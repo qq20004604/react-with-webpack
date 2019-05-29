@@ -5,57 +5,55 @@
  * 功能说明：
  *
  */
-import axios from 'axios';
+import axios from 'axios'
 
 // api请求基路径
-let baseURL = '';
+let baseURL = ''
 // 图片url基路径
-let imgURL = '';
-
-console.log(process.env.NODE_ENV)
-
+let imgURL = ''
+test
 if (process.env.NODE_ENV === 'development') { // 开发环境
-    baseURL = '/api';
+    baseURL = '/api'
 } else { // 生产环境
-    baseURL = '';
+    baseURL = ''
 }
 
-axios.defaults.baseURL = baseURL;
+axios.defaults.baseURL = baseURL
 
 // http request 拦截器
 axios.interceptors.request.use(
     config => {
-        return config;
+        return config
     },
     err => {
-        return Promise.reject(err);
+        return Promise.reject(err)
     }
-);
+)
 
 // http response 拦截器
 axios.interceptors.response.use(
     response => {
-        return response;
+        return response
     },
     error => {
-        return Promise.reject(error.response.data);
+        return Promise.reject(error.response.data)
     }
-);
+)
 
 let post = (url, data) => {
     return axios({
         method: 'post',
         url,
         data: JSON.stringify(data)
-    });
-};
+    })
+}
 
 let get = (url, params) => {
     return axios({
         method: 'get',
         url,
         params
-    });
-};
+    })
+}
 
-export {post, get};
+export {post, get}

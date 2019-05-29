@@ -5,8 +5,9 @@ const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-function resolve(dir) {
+function resolve (dir) {
     return path.join(__dirname, '..', dir);
 }
 
@@ -39,8 +40,8 @@ const getEntries = function () {
         return new HtmlWebpackPlugin({
             filename: resolve(`dist/${item.filename}.html`),
             template: resolve(`index.html`),
-            chunks: [item.filename], // 实现多入口的核心，决定自己加载哪个js文件，
-            xhtml: true,    // 自闭标签
+            chunks: [item.filename /*'vendor'*/], // 实现多入口的核心，决定自己加载哪个js文件，
+            xhtml: true    // 自闭标签
         });
     });
     let result = {
@@ -82,58 +83,74 @@ const config = {
         rules: [
             {
                 test: /\.jsx?$/,
+                loader: 'eslint-loader',
+                enforce: 'pre',
+                include: [resolve('src'), resolve('test')],
+                options: {
+                    formatter: require('eslint-friendly-formatter')
+                }
+            },
+            {
+                test: /\.jsx?$/,
                 exclude: /node_modules/,
                 // 写法一
                 loader: 'babel-loader'
             },
             {
                 test: /\.css$/,
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            modules: false,
-                            minimize: true,
-                            sourceMap: true,
-                            alias: {
-                                '@': resolve('src/img'), // '~@/logo.png' 这种写法，会去找src/img/logo.png这个文件
-                                'common': resolve('src/common')
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        // 'style-loader',
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: false,
+                                minimize: true,
+                                sourceMap: true,
+                                alias: {
+                                    '@': resolve('src/img'), // '~@/logo.png' 这种写法，会去找src/img/logo.png这个文件
+                                    'common': resolve('src/common')
+                                }
                             }
                         }
-                    }
-                ]
+                    ]
+                })
             },
             {
                 test: /\.less$/,
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            root: resolve('src/static'),   // url里，以 / 开头的路径，去找src/static文件夹
-                            minimize: true, // 压缩css代码
-                            modules: false,
-                            // sourceMap: true,    // sourceMap，默认关闭
-                            alias: {
-                                '@': resolve('src/img'), // '~@/logo.png' 这种写法，会去找src/img/logo.png这个文件
-                                'common': resolve('src/common')
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        // 'style-loader',
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                root: resolve('src/static'),   // url里，以 / 开头的路径，去找src/static文件夹
+                                minimize: true, // 压缩css代码
+                                modules: false,
+                                // sourceMap: true,    // sourceMap，默认关闭
+                                alias: {
+                                    '@': resolve('src/img'), // '~@/logo.png' 这种写法，会去找src/img/logo.png这个文件
+                                    'common': resolve('src/common')
+                                }
                             }
+                        },
+                        {
+                            loader: 'postcss-loader',
+                            options: {
+                                config: {
+                                    path: resolve('build')
+                                },
+                                sourceMap: true
+                            }
+                        },
+                        {
+                            loader: 'less-loader'   // compiles Less to CSS
                         }
-                    },
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            config: {
-                                path: resolve('build')
-                            },
-                            sourceMap: true
-                        }
-                    },
-                    {
-                        loader: 'less-loader',   // compiles Less to CSS
-                    }
-                ]
+                    ]
+                })
+
             },
             {
                 test: /\.(png|jpg|jpe?g|gif|svg)$/,
@@ -154,7 +171,7 @@ const config = {
                 test: /\.html$/,
                 use: [
                     {
-                        loader: 'html-withimg-loader',
+                        loader: 'html-withimg-loader'
                     }
                 ]
             }
@@ -167,6 +184,7 @@ const config = {
             // HMR 需要的两个插件
             new webpack.NamedModulesPlugin(),
             new webpack.HotModuleReplacementPlugin(),
+            new ExtractTextPlugin('css/[name].css')
         ],
         ...entries.plugins
     ]),
@@ -186,15 +204,33 @@ const config = {
 
 if (process.env.npm_lifecycle_event === 'build') {
     console.log('building..............');
-    config.plugins = config.plugins.concat([
-        new CleanWebpackPlugin(),
-        new webpack.DefinePlugin({
-            'process.env': {
-                'NODE_ENV': '"production"'
-            }
-        }),
-        new UglifyJSPlugin()
-    ]);
+    config.plugins = [...config.plugins,
+        ...[
+            new CleanWebpackPlugin(['dist'], {
+                root: resolve(''),
+                exclude: [],
+                verbose: true,
+                dry: false
+            }),
+            new webpack.DefinePlugin({
+                'process.env': {
+                    'NODE_ENV': '"production"'
+                }
+            }),
+            // new webpack.optimize.CommonsChunkPlugin({
+            //     name: 'vendor', // 这个对应的是 entry 的 key
+            //     minChunks: 2
+            // }),
+            new UglifyJSPlugin()
+        ]
+    ];
+    config.externals = {
+        // 后面是原本使用的全局变量名，前面的是引入的包名（就是import xx from 'echart'），然后我们实际写代码时候，用的是xx这个变量名。
+        'react': 'React',
+        'react-dom': 'ReactDOM',
+        'antd': 'antd',
+        'moment': 'moment'
+    };
 } else {
     config.plugins = config.plugins.concat([
         new webpack.DefinePlugin({
@@ -203,12 +239,12 @@ if (process.env.npm_lifecycle_event === 'build') {
             }
         })
     ]);
-}
-console.log('\033[;31m 你可以通过以下链接来打开页面！');
-Object.keys(entries.entry).forEach(key => {
-    if (key !== 'vendor') {
-        console.log(`http://localhost:8080/${key}.html`);
-    }
-});
+    console.log('\033[;31m 你可以通过以下链接来打开页面！');
+    Object.keys(entries.entry).forEach(key => {
+        if (key !== 'vendor') {
+            console.log(`http://localhost:8080/${key}.html`);
+        }
+    });
 
+}
 module.exports = config;
