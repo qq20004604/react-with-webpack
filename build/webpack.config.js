@@ -63,7 +63,19 @@ const config = {
     // webpack-dev-server
     devServer: {
         contentBase: resolve('dist'),
-        hot: true
+        hot: true,
+        // proxy: {
+        //     '/api': 'http://127.0.0.1:8000'
+        // },
+        proxy: {
+            '/api': {
+                target: 'http://127.0.0.1:8000',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/api': ''
+                }
+            }
+        }
     },
     module: {
         // loader放在rules这个数组里面
@@ -182,6 +194,14 @@ if (process.env.npm_lifecycle_event === 'build') {
             }
         }),
         new UglifyJSPlugin()
+    ]);
+} else {
+    config.plugins = config.plugins.concat([
+        new webpack.DefinePlugin({
+            'process.env': {
+                'NODE_ENV': '"development"'
+            }
+        })
     ]);
 }
 console.log('\033[;31m 你可以通过以下链接来打开页面！');

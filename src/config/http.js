@@ -12,6 +12,8 @@ let baseURL = '';
 // 图片url基路径
 let imgURL = '';
 
+console.log(process.env.NODE_ENV)
+
 if (process.env.NODE_ENV === 'development') { // 开发环境
     baseURL = '/api';
 } else { // 生产环境
@@ -56,4 +58,4 @@ let get = (url, params) => {
     });
 };
 
-export default {post, get};
+export {post, get};
