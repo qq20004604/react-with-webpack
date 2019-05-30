@@ -152,17 +152,47 @@ const config = {
                 })
 
             },
+            // {
+            //     test: /\.(png|jpg|jpe?g|gif|svg)$/,
+            //     use: [
+            //         {
+            //             loader: 'url-loader',
+            //             options: {
+            //                 limit: 4096,
+            //                 name: '[hash].[ext]',
+            //                 outputPath: function (fileName) {
+            //                     return '[path]img/' + fileName;    // 后面要拼上这个 fileName 才行
+            //                 }
+            //             }
+            //         }
+            //     ]
+            // },
             {
-                test: /\.(png|jpg|jpe?g|gif|svg)$/,
+                test: /\.(png|jpg|jpeg|gif)$/,
                 use: [
                     {
-                        loader: 'url-loader',
+                        loader: 'file-loader',
                         options: {
-                            limit: 4096,
-                            name: '[hash].[ext]',
+                            // 这个是普通带[path]的，对context生效
+                            // name: '[path][name]..[ext]',   // 文件名，这个是将图片放在打包后的img文件夹中
+
+                            // 当name里使用了[path]的时候，这个才有意义，其他时候没必要加
+                            // context: __dirname + '/../',
+
+                            // 这个是对publicPath使用的
+                            name: '[name].[hash:10].[ext]',   // 文件名，这个是将图片放在打包后的img文件夹中
+                            publicPath: '../static/',
+
+                            // 输出目录，表现效果相当于 outputPath + name 这样，可以直接写在name里如 myImage/[name].[ext] 效果一样
                             outputPath: function (fileName) {
-                                return 'img/' + fileName;    // 后面要拼上这个 fileName 才行
+                                return 'static/' + fileName;    // 后面要拼上这个 fileName 才行
                             }
+
+                            // 文件路径使用 源代码中，图片相对于css文件路径
+                            // useRelativePath: true
+
+                            // 不生成打包后的图片
+                            // emitFile: false
                         }
                     }
                 ]
