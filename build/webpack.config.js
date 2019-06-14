@@ -107,7 +107,7 @@ const config = {
                             options: {
                                 modules: false,
                                 minimize: true,
-                                sourceMap: true,
+                                sourceMap: false,
                                 alias: {
                                     '@': resolve('src/img'), // '~@/logo.png' 这种写法，会去找src/img/logo.png这个文件
                                     'common': resolve('src/common')
@@ -234,6 +234,7 @@ const config = {
 
 if (process.env.npm_lifecycle_event === 'build') {
     console.log('building..............');
+    config.output.publicPath = 'static';
     config.plugins = [...config.plugins,
         ...[
             new CleanWebpackPlugin(['dist'], {
