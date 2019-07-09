@@ -209,15 +209,12 @@ const config = {
     },
     // 将插件添加到webpack中
     // 如果还有其他插件，将两个数组合到一起就行了
-    plugins: ([
-        ...[
-            // HMR 需要的两个插件
-            new webpack.NamedModulesPlugin(),
-            new webpack.HotModuleReplacementPlugin(),
-            new ExtractTextPlugin('css/[name].css')
-        ],
-        ...entries.plugins
-    ]),
+    plugins: [
+        // HMR 需要的两个插件
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
+        new ExtractTextPlugin('css/[name].css')
+    ],
     resolve: {
         // 省略后缀名
         extensions: ['.js', '.jsx'],
@@ -263,13 +260,15 @@ if (process.env.npm_lifecycle_event === 'build') {
         'moment': 'moment'
     };
 } else {
-    config.plugins = config.plugins.concat([
-        new webpack.DefinePlugin({
-            'process.env': {
-                'NODE_ENV': '"development"'
-            }
-        })
-    ]);
+    config.plugins = [...config.plugins,
+        ...[
+            new webpack.DefinePlugin({
+                'process.env': {
+                    'NODE_ENV': '"development"'
+                }
+            })],
+        ...entries.plugins
+    ];
     console.log('\033[;31m 你可以通过以下链接来打开页面！');
     Object.keys(entries.entry).forEach(key => {
         if (key !== 'vendor') {
