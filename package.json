@@ -1,13 +1,14 @@
 {
   "name": "key-namange",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "build": "webpack --config build/webpack.config.js",
     "dev": "webpack-dev-server --env.NODE_ENV=development --open --config build/webpack.config.js",
     "lint": "eslint --ext .js,.jsx src"
   },
   "devDependencies": {
-    "babel-plugin-transform-runtime": "^6.23.0"
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "copy-webpack-plugin": "^4.6.0"
   },
   "dependencies": {
     "antd": "^3.18.2",
