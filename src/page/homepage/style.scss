@@ -1,0 +1,81 @@
+@import '~common/config/config.scss';
+
+$footterHeight: vw(80);
+
+#box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    font-size: vw(24);
+
+    .content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        bottom: $footterHeight;
+        padding: vw(20);
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+
+            th, td {
+                border: 1px solid #000;
+                font-size: vw(24);
+                height: vw(40);
+                line-height: vw(40);
+            }
+
+            td:first-child {
+                text-align: center;
+            }
+        }
+
+        .search {
+            margin-top: vw(40);
+        }
+
+        .description {
+            margin-top: vw(60);
+            font-size: vw(24);
+            line-height: vw(40);
+        }
+
+        .wechat-img {
+            width: 100%;
+        }
+    }
+
+    .footter {
+        position: absolute;
+        bottom: 0;
+        height: $footterHeight;
+        color: #000;
+        left: 0;
+        width: 100%;
+        border-top: vw(4) solid #333;
+
+        .item {
+            display: inline-block;
+            float: left;
+            height: 100%;
+            width: 50%;
+            line-height: $footterHeight;
+            font-size: vw(32);
+            text-align: center;
+        }
+
+        .item:first-child {
+            border-right: vw(4) solid #333;
+        }
+
+        .item.focus {
+            background-color: orange;
+        }
+    }
+}
