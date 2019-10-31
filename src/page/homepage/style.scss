@@ -88,7 +88,39 @@ $footterHeight: vw(80);
             td:first-child {
                 text-align: center;
                 width: 20vw;
+                vertical-align: top;
             }
+
+        }
+
+        .is-mananger-push {
+            color: dodgerblue;
+        }
+
+        .add-item {
+            th, td {
+                padding: vw(10);
+            }
+
+            td:first-child {
+                text-align: center;
+                width: 30vw;
+                vertical-align: top;
+            }
+
+            .textarea, .input {
+                width: 60vw;
+                line-height: vw(48);
+                font-size: vw(24);
+            }
+        }
+
+        .notice {
+            line-height: vw(40);
+        }
+
+        .submit {
+            margin-top: vw(40);
         }
 
         .random {
@@ -117,6 +149,7 @@ $footterHeight: vw(80);
         .wechat-img {
             width: 100%;
         }
+
     }
 
     .footter {

@@ -15,6 +15,7 @@ class BuyWhat extends React.Component {
         price: '',
         reason: '',
         href: '',
+        is_manager: 0,
         searchID: ''
     };
 
@@ -49,8 +50,16 @@ class BuyWhat extends React.Component {
                     <td>商品链接</td>
                     <td>
                         {
-                            this.state.href ? <a href={this.state.href}>点击访问商品链接</a> : '木有链接'
+                            this.state.href ? <a href={this.state.href}>
+                                <button>点击访问商品链接</button>
+                            </a> : '木有链接'
                         }
+                    </td>
+                </tr>
+                <tr>
+                    <td>管理员推荐</td>
+                    <td>
+                        {this.state.is_manager ? <span className='is-mananger-push'>'是'</span> : '否'}
                     </td>
                 </tr>
                 </tbody>
@@ -101,12 +110,13 @@ class My extends React.Component {
         name: '',
         price: '',
         reason: '',
-        href: ''
+        href: '',
+        submitting: false
     };
 
     render () {
         return <div className="content">
-            <table>
+            <table className='add-item'>
                 <thead>
                 <tr>
                     <th></th>
@@ -117,32 +127,49 @@ class My extends React.Component {
                 <tr>
                     <td>商品名（必填）</td>
                     <td><input type="text"
+                               className='input'
+                               placeholder='只要能描述清楚商品是什么即可'
                                value={this.state.name}
                                onChange={e => this.changeInput(e.target.value, 'name')}/></td>
                 </tr>
                 <tr>
                     <td>价格（必填）</td>
                     <td><input type="number"
+                               className='input'
                                value={this.state.price}
-                               placeholder='大概数字即可'
+                               placeholder='大概数字即可，不能是小数'
                                onChange={e => this.changeInput(e.target.value, 'price')}/></td>
                 </tr>
                 <tr>
-                    <td>推荐理由（必填）</td>
-                    <td><input type="text"
-                               value={this.state.reason}
-                               onChange={e => this.changeInput(e.target.value, 'reason')}/></td>
+                    <td>推荐理由<br/>（选填）</td>
+                    <td><textarea type="text"
+                                  className='textarea'
+                                  placeholder='靠谱的推荐理由可以提高通过率'
+                                  value={this.state.reason}
+                                  onChange={e => this.changeInput(e.target.value, 'reason')}/></td>
                 </tr>
                 <tr>
-                    <td>商品链接（选填）</td>
-                    <td><input type="text"
-                               value={this.state.href}
-                               onChange={e => this.changeInput(e.target.value, 'href')}/></td>
+                    <td>商品链接<br/>（选填）</td>
+                    <td><textarea type="text"
+                                  className='textarea'
+                                  placeholder='目前只接受大的电商公司的商品链接。不超过240字'
+                                  value={this.state.href}
+                                  onChange={e => this.changeInput(e.target.value, 'href')}/></td>
                 </tr>
                 </tbody>
             </table>
-
-            <button onClick={this.submit}>点击提交</button>
+            <div className="notice">
+                <p><b>说明：</b></p>
+                <p>为了防止浪费大家时间，推荐商品时，需要经过管理员审核。</p>
+                <p>
+                    高质量的商品会通过审核，例如：有特色的、性价比高的、感兴趣的人比较多的、比较有用的、优惠力度大的。
+                </p>
+            </div>
+            <button className='submit' onClick={this.submit}>
+                {
+                    this.state.submitting ? '提交中' : '点击提交'
+                }
+            </button>
         </div>;
     }
 
@@ -153,24 +180,37 @@ class My extends React.Component {
     };
 
     submit = () => {
-        const data = {
-            name: '',
-            price: '',
-            reason: '',
-            href: ''
-        };
+        if (this.state.submitting) {
+            return;
+        }
+        this.setState({
+            submitting: true
+        });
+        const data = this.state;
         $ajax.addItem(data).then(result => {
             console.log(result);
+            alert(result.data.msg);
+            this.setState({
+                name: '',
+                price: '',
+                reason: '',
+                href: ''
+            });
         }).catch(err => {
             console.error(err);
+            alert('未知错误');
+        }).finally(() => {
+            this.setState({
+                submitting: false
+            });
         });
     };
 }
 
 class Root extends React.Component {
     state = {
-        // focusTab: 'buy-what'
-        focusTab: 'my'
+        focusTab: 'buy-what'
+        // focusTab: 'my'
     };
 
     render () {
@@ -185,7 +225,7 @@ class Root extends React.Component {
                 </div>
                 <div className={`item ${this.state.focusTab === 'my' ? 'focus' : ''}`}
                      onClick={() => this.changeTab('my')}>
-                    施工中
+                    我也来推荐一个
                 </div>
             </div>
         </div>;
