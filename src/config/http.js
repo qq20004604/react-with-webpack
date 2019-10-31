@@ -11,7 +11,6 @@ import axios from 'axios'
 let baseURL = ''
 // 图片url基路径
 let imgURL = ''
-test
 if (process.env.NODE_ENV === 'development') { // 开发环境
     baseURL = '/api'
 } else { // 生产环境
@@ -44,7 +43,10 @@ let post = (url, data) => {
     return axios({
         method: 'post',
         url,
-        data: JSON.stringify(data)
+        data: data,
+        headers: {
+            'X-CSRFToken': window.csrftoken
+        }
     })
 }
 

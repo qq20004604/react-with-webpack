@@ -8,8 +8,8 @@
 import {get, post} from '../config/http';
 
 const $ajax = {
-    getUserInfo() {
-        return get('/user_info', {});
+    addItem (payload) {
+        return post('/add_item', payload);
     }
 };
 

@@ -10,6 +10,43 @@ $footterHeight: vw(80);
     height: 100vh;
     font-size: vw(24);
 
+    button {
+        line-height: 1.5;
+        position: relative;
+        display: inline-block;
+        font-weight: 400;
+        white-space: nowrap;
+        text-align: center;
+        background-image: none;
+        border: 1px solid transparent;
+        -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+        cursor: pointer;
+        -webkit-transition: all .3s cubic-bezier(.645, .045, .355, 1);
+        transition: all .3s cubic-bezier(.645, .045, .355, 1);
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        height: vw(60);
+        padding: 0 vw(15);
+        font-size: vw(24);
+        border-radius: vw(4);
+        color: rgba(0, 0, 0, 0.65);
+        background-color: #fff;
+        border-color: #d9d9d9;
+        color: #fff;
+        background-color: #1890ff;
+        border-color: #1890ff;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+        -webkit-appearance: button;
+        margin-right: vw(8);
+        margin-bottom: vw(12);
+        outline: 0;
+    }
+
     .content {
         position: absolute;
         top: 0;
@@ -20,6 +57,22 @@ $footterHeight: vw(80);
         overflow-x: hidden;
         overflow-y: auto;
 
+        h1 {
+            height: vw(100);
+            line-height: vw(100);
+            width: 100%;
+            padding-left: vw(30);
+            font-size: vw(48);
+            color: #000;
+
+            .knife {
+                display: inline-block;
+                margin-top: vw(30);
+                width: vw(60);
+                height: vw(60);
+            }
+        }
+
         .table {
             border-collapse: collapse;
             width: 100%;
@@ -29,15 +82,30 @@ $footterHeight: vw(80);
                 font-size: vw(24);
                 height: vw(40);
                 line-height: vw(40);
+                padding: 0 vw(10);
             }
 
             td:first-child {
                 text-align: center;
+                width: 20vw;
             }
         }
 
+        .random {
+            margin-top: vw(20);
+            height: vw(60);
+            line-height: vw(60);
+            text-align: center;
+
+        }
+
         .search {
-            margin-top: vw(40);
+            margin-top: vw(20);
+
+            .row {
+                line-height: vw(40);
+                margin-top: vw(10);
+            }
         }
 
         .description {
@@ -68,6 +136,12 @@ $footterHeight: vw(80);
             line-height: $footterHeight;
             font-size: vw(32);
             text-align: center;
+
+            .knife {
+                display: inline-block;
+                width: vw(30);
+                height: vw(30);
+            }
         }
 
         .item:first-child {

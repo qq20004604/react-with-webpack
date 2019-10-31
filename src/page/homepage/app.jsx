@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'common/css/reset.css';
 import './style.scss';
+import $ajax from 'api/ajax.js';
 
 class BuyWhat extends React.Component {
     componentWillMount () {
@@ -19,7 +20,14 @@ class BuyWhat extends React.Component {
 
     render () {
         return <div className="content">
+            <h1>双十一剁手器 <img className='knife' src={require('assets/knife.png')} alt=""/></h1>
             <table className='table'>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>商品</th>
+                </tr>
+                </thead>
                 <tbody>
                 <tr>
                     <td>ID</td>
@@ -48,20 +56,25 @@ class BuyWhat extends React.Component {
                 </tbody>
             </table>
 
+            <div className="random">
+                <button onClick={this.randomItem}>点击按钮，随机推荐下一个商品</button>
+            </div>
+
             <div className="search">
-                输入ID搜索指定商品
-                <input type="number"
-                       value={this.state.searchID}
-                       onChange={e => this.changeSearchID(e.target.value)}/>
-                <button onClick={this.search}>搜索</button>
+                <div className='row'>输入ID搜索指定商品</div>
+                <div className='row'>
+                    <input type="number"
+                           value={this.state.searchID}
+                           onChange={e => this.changeSearchID(e.target.value)}/>
+                    <br/>
+                </div>
+                <div className='row'>
+                    <button onClick={this.search}>搜索</button>
+                </div>
             </div>
 
             <div className='description'>
-                <h4>本页面作者：零零水。联系方式：QQ：20004604，微信：qq20004604</h4>
-                <h4>如果你有有趣或者值得购买的东西，想要分享给大家，可以加这个QQ群【双十一买什么呀，群号：850939752】，或者 <a
-                    href="https://jq.qq.com/?_wv=1027&k=5GBUAq9">点击链接加入群聊【双十一买什么呀】</a>
-                </h4>
-                <h4>当然，你也可以加入微信群，以下是二维码：</h4>
+                <h4>想推荐/分享/寻找更多有趣的东西？微信群二维码如下：</h4>
                 <img src="http://119.3.214.234/buywhat.png" alt="" className='wechat-img'/>
             </div>
         </div>;
@@ -77,23 +90,87 @@ class BuyWhat extends React.Component {
         let id = this.state.searchID;
         window.location.href = '?id=' + id;
     };
+
+    randomItem = () => {
+        window.location.href = '?last=' + this.state.id;
+    };
 }
 
 class My extends React.Component {
     state = {
-        name: ''
+        name: '',
+        price: '',
+        reason: '',
+        href: ''
     };
 
     render () {
         return <div className="content">
+            <table>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>商品名（必填）</td>
+                    <td><input type="text"
+                               value={this.state.name}
+                               onChange={e => this.changeInput(e.target.value, 'name')}/></td>
+                </tr>
+                <tr>
+                    <td>价格（必填）</td>
+                    <td><input type="number"
+                               value={this.state.price}
+                               placeholder='大概数字即可'
+                               onChange={e => this.changeInput(e.target.value, 'price')}/></td>
+                </tr>
+                <tr>
+                    <td>推荐理由（必填）</td>
+                    <td><input type="text"
+                               value={this.state.reason}
+                               onChange={e => this.changeInput(e.target.value, 'reason')}/></td>
+                </tr>
+                <tr>
+                    <td>商品链接（选填）</td>
+                    <td><input type="text"
+                               value={this.state.href}
+                               onChange={e => this.changeInput(e.target.value, 'href')}/></td>
+                </tr>
+                </tbody>
+            </table>
 
+            <button onClick={this.submit}>点击提交</button>
         </div>;
     }
+
+    changeInput = (v, type) => {
+        this.setState({
+            [type]: v
+        });
+    };
+
+    submit = () => {
+        const data = {
+            name: '',
+            price: '',
+            reason: '',
+            href: ''
+        };
+        $ajax.addItem(data).then(result => {
+            console.log(result);
+        }).catch(err => {
+            console.error(err);
+        });
+    };
 }
 
 class Root extends React.Component {
     state = {
-        focusTab: 'buy-what'
+        // focusTab: 'buy-what'
+        focusTab: 'my'
     };
 
     render () {
@@ -104,7 +181,7 @@ class Root extends React.Component {
             <div className="footter">
                 <div className={`item ${this.state.focusTab === 'buy-what' ? 'focus' : ''}`}
                      onClick={() => this.changeTab('buy-what')}>
-                    买买买
+                    剁手器<img className='knife' src={require('assets/knife.png')} alt=""/>
                 </div>
                 <div className={`item ${this.state.focusTab === 'my' ? 'focus' : ''}`}
                      onClick={() => this.changeTab('my')}>
