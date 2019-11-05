@@ -40,7 +40,7 @@ const getEntries = function () {
     let plugins = list.map(item => {
         return new HtmlWebpackPlugin({
             filename: resolve(`dist/${item.filename}.html`),
-            template: resolve(`index.html`),
+            template: resolve(`index${process.env.npm_lifecycle_event === 'build' ? '' : '_dev'}.html`),
             chunks: [item.filename /*'vendor'*/], // 实现多入口的核心，决定自己加载哪个js文件，
             xhtml: true    // 自闭标签
         });
@@ -147,7 +147,7 @@ const config = {
                             }
                         },
                         {
-                            loader: 'config-loader'   // compiles Less to CSS
+                            loader: 'less-loader'   // compiles Less to CSS
                         }
                     ]
                 })
