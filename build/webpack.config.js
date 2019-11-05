@@ -215,7 +215,7 @@ const config = {
 
                             // 这个是对publicPath使用的
                             name: '[name].[hash:10].[ext]',   // 文件名，这个是将图片放在打包后的img文件夹中
-                            publicPath: 'http://119.3.214.234/11/img',
+                            publicPath: '',
 
                             // 输出目录，表现效果相当于 outputPath + name 这样，可以直接写在name里如 myImage/[name].[ext] 效果一样
                             outputPath: function (fileName) {
@@ -267,7 +267,6 @@ const config = {
 if (process.env.npm_lifecycle_event === 'build') {
     console.log('building..............');
     // config.output.publicPath = 'static';
-    config.output.publicPath = 'http://119.3.214.234/11/';
     config.plugins = [
         ...config.plugins,
         ...[
