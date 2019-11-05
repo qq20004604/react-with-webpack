@@ -6,7 +6,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 function resolve (dir) {
     return path.join(__dirname, '..', dir);
@@ -147,11 +147,44 @@ const config = {
                             }
                         },
                         {
-                            loader: 'less-loader'   // compiles Less to CSS
+                            loader: 'config-loader'   // compiles Less to CSS
                         }
                     ]
                 })
-
+            },
+            {
+                test: /\.scss$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        // 'style-loader',
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                root: resolve('src/static'),   // url里，以 / 开头的路径，去找src/static文件夹
+                                minimize: true, // 压缩css代码
+                                modules: false,
+                                // sourceMap: true,    // sourceMap，默认关闭
+                                alias: {
+                                    '@': resolve('src/img'), // '~@/logo.png' 这种写法，会去找src/img/logo.png这个文件
+                                    'common': resolve('src/common')
+                                }
+                            }
+                        },
+                        {
+                            loader: 'postcss-loader',
+                            options: {
+                                config: {
+                                    path: resolve('build')
+                                },
+                                sourceMap: true
+                            }
+                        },
+                        {
+                            loader: 'sass-loader'   // compiles Sass to CSS
+                        }
+                    ]
+                })
             },
             // {
             //     test: /\.(png|jpg|jpe?g|gif|svg)$/,
@@ -182,7 +215,7 @@ const config = {
 
                             // 这个是对publicPath使用的
                             name: '[name].[hash:10].[ext]',   // 文件名，这个是将图片放在打包后的img文件夹中
-                            publicPath: '../img/',
+                            publicPath: 'http://119.3.214.234/11/img',
 
                             // 输出目录，表现效果相当于 outputPath + name 这样，可以直接写在name里如 myImage/[name].[ext] 效果一样
                             outputPath: function (fileName) {
@@ -234,6 +267,7 @@ const config = {
 if (process.env.npm_lifecycle_event === 'build') {
     console.log('building..............');
     // config.output.publicPath = 'static';
+    config.output.publicPath = 'http://119.3.214.234/11/';
     config.plugins = [
         ...config.plugins,
         ...[
@@ -256,7 +290,7 @@ if (process.env.npm_lifecycle_event === 'build') {
             new CopyWebpackPlugin([
                 {
                     from: path.resolve(__dirname, '../src/static'),
-                    to: 'static',
+                    to: 'static'
                     // ignore: ['.*']
                 }
             ])
@@ -277,10 +311,11 @@ if (process.env.npm_lifecycle_event === 'build') {
             }
         })
     ]);
-    console.log('\033[;31m 你可以通过以下链接来打开页面！');
+    console.log('\033[;31m ====你可以通过以下链接来打开页面！====');
     Object.keys(entries.entry).forEach(key => {
         if (key !== 'vendor') {
-            console.log(`http://localhost:8080/${key}.html`);
+            const url = `http://localhost:8080/${key}.html`;
+            console.log('\033[;31m' + url);
         }
     });
 
